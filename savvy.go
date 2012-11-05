@@ -98,6 +98,14 @@ func walkAndGetTime(path string, info os.FileInfo, err error) error {
 	/* if top-level directory... */
 	if info.IsDir() && len(splitPath) == 1 {
 
+		/* If directory contains a .savvyignore file, skip */
+		fi, err := os.Stat(path0 + "/savvyignore")
+		if fi != nil && err == nil {
+			log.Println("Directory contains \"savvyignore\", skipping :", path0)
+			return nil
+		}
+
+
 		dir, ok = topDirs[ path0 ]
 		if !ok {
 			dir = &dirInfo{}
@@ -145,7 +153,7 @@ func scheduleBackup(dir *dirInfo) {
 func performBackup(dir *dirInfo) {
 	/* TODO: rework filtering of directories */
 	if dir.path == "." || dir.path == ".hg" {
-		fmt.Println("skipping ", dir.path)
+		log.Println("skipping ", dir.path)
 		return
 	}
 
