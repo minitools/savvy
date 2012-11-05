@@ -14,6 +14,8 @@ import (
 	"path/filepath"
 	"strings"
 	"time"
+	"log"
+	"os/exec"
 )
 
 type dirInfo struct {
@@ -141,8 +143,38 @@ func scheduleBackup(dir *dirInfo) {
 }
 
 func performBackup(dir *dirInfo) {
-	fmt.Println("performing backup for", dir)
-	if dir.doBackup != true || ! dir.info.IsDir() {
-		panic("Unexpected backup")
+	/* TODO: rework filtering of directories */
+	if dir.path == "." || dir.path == ".hg" {
+		fmt.Println("skipping ", dir.path)
+		return
 	}
+
+	if dir.doBackup != true || ! dir.info.IsDir() {
+		log.Panic("Unexpected backup")
+	}
+
+
+	baseBackupDir := "/Users/Shared/BACKUP/"
+
+	destDate := dir.mostRecent.Format("20060102-150405")
+	destFilename := baseBackupDir + dir.path0 + "-" + destDate + ".zip"
+
+	/* Check if archive already exists */
+	fi, err := os.Stat(destFilename)
+	if fi != nil && err == nil {
+		log.Println("Archive exists, skipping :", destFilename)
+		return
+	}
+
+	fmt.Println("performing backup for", dir.path, " --> ", destFilename)
+
+	/* Archive directory */
+	out, err := exec.Command("zip", "-r", destFilename, dir.path).Output()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println("-----------------")
+	fmt.Println(string(out))
+	fmt.Println("-----------------")
 }
