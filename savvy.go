@@ -15,7 +15,6 @@ import (
 	"strings"
 	"time"
 	"log"
-	"os/exec"
 )
 
 type dirInfo struct {
@@ -124,7 +123,7 @@ func walkAndGetTime(path string, info os.FileInfo, err error) error {
 	if !ok {
 		
 		modified[ path0 ] = cachedModTime
-		fmt.Println("Added ", path0 )
+		fmt.Println("Scanned ", path0 )
 	}
 	if modTime.After(cachedModTime) {
 		modified[ path0 ] = modTime
@@ -162,13 +161,22 @@ func performBackup(dir *dirInfo) {
 	}
 
 
-	baseBackupDir := "/Users/Shared/BACKUP/"
+	baseBackupDir := DestPath()+"/"
+
+	/* Check existence of base directory every time.
+	   TODO: optimize
+	 */
+	fi, err := os.Stat(baseBackupDir)
+	if fi == nil && err != nil {
+		log.Fatal("Destination directory does not exist :", baseBackupDir)
+		return
+	}
 
 	destDate := dir.mostRecent.Format("20060102-150405")
 	destFilename := baseBackupDir + dir.path0 + "-" + destDate + ".zip"
 
 	/* Check if archive already exists */
-	fi, err := os.Stat(destFilename)
+	fi, err = os.Stat(destFilename)
 	if fi != nil && err == nil {
 		log.Println("Archive exists, skipping :", destFilename)
 		return
@@ -176,13 +184,7 @@ func performBackup(dir *dirInfo) {
 
 	fmt.Println("performing backup for", dir.path, " --> ", destFilename)
 
-	/* Archive directory */
-	out, err := exec.Command("zip", "-r", destFilename, dir.path).Output()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	fmt.Println("-----------------")
-	fmt.Println(string(out))
-	fmt.Println("-----------------")
+	Archive(destFilename, dir.path)
 }
+
+
