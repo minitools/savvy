@@ -2,19 +2,67 @@ package main
 
 import (
 	"testing"
+	"os"
+	"os/exec"
 )
 
 /* Tests for savvy backup utility */
 
+var safeEnvironment = false
+
+func safeToRun(t *testing.T) {
+	if !safeEnvironment {
+		t.Fatal("unsafe env")
+	}
+}
+
+func Test000_SetupDirs(t *testing.T) {
+
+	// make dir
+	err := os.Mkdir("test/", os.ModeDir | 0777)
+	//if err != nil && err != os.ErrExist {
+	//	t.Fatal(err)
+	//}
+
+	err = os.Chdir("test")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	wd, err2 := os.Getwd()
+	if err2 == nil {
+		safeEnvironment = true
+	}
+	t.Log("Working dir:", wd)
+}
+
 /* 
 	Empty directory can be backed up.
 */
-func Test001_Empy(t *testing.T) {
+func Test001_Empty(t *testing.T) {
 	
-	// make dir
+	safeToRun(t)
+
+	err := os.Mkdir("a00", os.ModeDir | 0777)
+	err = err
+	//if err != nil {
+	//	t.Fatal(err)
+	//}
+
 	// run savvy on it
+	out, err2 := exec.Command("../savvy").Output()
+
+	if err2 != nil {
+		t.Fatal(err2)	
+	}
+	
+	t.Log(string(out))
+	err2 = err2
+
 	// verify results
-	t.Error("not implemented\n")
+	//t.Error("not implemented\n")
+
+	//os.RemoveAll("*")
 }
 
 /*
@@ -22,13 +70,17 @@ func Test001_Empy(t *testing.T) {
 */
 func Test002_Simple(t *testing.T) {
 	t.Error("not implemented\n")	
+
+	safeToRun(t)
 }
 
 /* 
 	Directory with names containing spaces & special characters can be backed.
 */
-func Test003_SpecialCharName(t *testing.T) {
+func Test003_SpecialCharName(t *testing.T) {	
 	t.Error("not implemented\n")
+
+	safeToRun(t)
 }
 
 /*
@@ -36,6 +88,8 @@ func Test003_SpecialCharName(t *testing.T) {
 */
 func Test004_Ignore(t *testing.T) {
 	t.Error("not implemented\n")
+
+	safeToRun(t)
 }
 
 /*
@@ -46,6 +100,8 @@ func Test004_Ignore(t *testing.T) {
 func Test005_DestinationDirectory(t *testing.T) {
 	t.Error("not implemented\n")
 
+	safeToRun(t)
+	
 	// remove any .savvy file
 
 	// make dir and populate
@@ -65,6 +121,8 @@ func Test005_DestinationDirectory(t *testing.T) {
 */
 func Test006_CacheIsWorking(t *testing.T) {
 	t.Error("not implemented\n")
+
+	safeToRun(t)
 
 	// remove any .savvy file
 
