@@ -4,8 +4,9 @@ Incredibly basic backup utility that:
 1. scans local folders, extracting last modification date
 2. archives folders that were changed since last scan
 
-Folders are archived into a fixed destinamtion folder (currently hard-coded)
+Folders are archived into a fixed destination folder (currently hard-coded)
 as Zip files with the following name:
+
 {folder name}-{dateYYMMDD-HHMMSS}.zip
 
 
@@ -18,6 +19,7 @@ Version history
 
 
 TODO:
+- Default to local destination directory
 
 - Add way to specify destination directory
   1. first time, by passing an argument to the program
@@ -26,4 +28,5 @@ TODO:
      reads it to extract destination directory
   3. if it doesn't find a .savvy directory and no destination is specified, it logs an error and exits
 
+- Add test suite
 
