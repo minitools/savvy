@@ -1,9 +1,9 @@
 package main
 
 import (
-	"testing"
 	"os"
 	"os/exec"
+	"testing"
 )
 
 /* Tests for savvy backup utility */
@@ -19,7 +19,7 @@ func safeToRun(t *testing.T) {
 func Test000_SetupDirs(t *testing.T) {
 
 	// make dir
-	err := os.Mkdir("test/", os.ModeDir | 0777)
+	err := os.Mkdir("test/", os.ModeDir|0777)
 	//if err != nil && err != os.ErrExist {
 	//	t.Fatal(err)
 	//}
@@ -36,14 +36,14 @@ func Test000_SetupDirs(t *testing.T) {
 	t.Log("Working dir:", wd)
 }
 
-/* 
+/*
 	Empty directory can be backed up.
 */
 func Test001_Empty(t *testing.T) {
-	
+
 	safeToRun(t)
 
-	err := os.Mkdir("a00", os.ModeDir | 0777)
+	err := os.Mkdir("a00", os.ModeDir|0777)
 	err = err
 	//if err != nil {
 	//	t.Fatal(err)
@@ -53,9 +53,9 @@ func Test001_Empty(t *testing.T) {
 	out, err2 := exec.Command("../savvy").Output()
 
 	if err2 != nil {
-		t.Fatal(err2)	
+		t.Fatal(err2)
 	}
-	
+
 	t.Log(string(out))
 	err2 = err2
 
@@ -66,18 +66,18 @@ func Test001_Empty(t *testing.T) {
 }
 
 /*
-	Directory with small number of files can be backed up. 
+	Directory with small number of files can be backed up.
 */
 func Test002_Simple(t *testing.T) {
-	t.Error("not implemented\n")	
+	t.Error("not implemented\n")
 
 	safeToRun(t)
 }
 
-/* 
+/*
 	Directory with names containing spaces & special characters can be backed.
 */
-func Test003_SpecialCharName(t *testing.T) {	
+func Test003_SpecialCharName(t *testing.T) {
 	t.Error("not implemented\n")
 
 	safeToRun(t)
@@ -101,7 +101,7 @@ func Test005_DestinationDirectory(t *testing.T) {
 	t.Error("not implemented\n")
 
 	safeToRun(t)
-	
+
 	// remove any .savvy file
 
 	// make dir and populate

@@ -1,7 +1,7 @@
 package main
 
 /* TO DO:
-   1. finish traversal by 
+   1. finish traversal by
    - recording last modification time for top-level directory (accumulate in map)
    - add top-level dir to list of directories to backup, if backup criteria met
 
@@ -10,28 +10,27 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"path/filepath"
 	"strings"
 	"time"
-	"log"
 )
 
 type dirInfo struct {
-	path 		string
-	path0		string
-	info 		os.FileInfo
-	mostRecent	time.Time
-	doBackup	bool
+	path       string
+	path0      string
+	info       os.FileInfo
+	mostRecent time.Time
+	doBackup   bool
 }
 
 var (
-	oldest		time.Time = time.Now()
-	mostRecent	time.Time
-
-	topDirs 	map[string]*dirInfo
-	modified	map[string]time.Time
-	cache 		*backupCache
+	oldest     time.Time = time.Now()
+	mostRecent time.Time
+	topDirs    map[string]*dirInfo
+	modified   map[string]time.Time
+	cache      *backupCache
 )
 
 func main() {
@@ -40,7 +39,6 @@ func main() {
 	parseFlags()
 
 	cache.Load()
-
 
 	fmt.Println("== schedule ================================")
 
@@ -54,7 +52,7 @@ func main() {
 	/* Get recent modified date from all files into directory
 	   Schedule backups, marking top directories as necessary */
 	for _, dir := range topDirs {
-		dir.mostRecent = modified[ dir.path0 ]
+		dir.mostRecent = modified[dir.path0]
 
 		previous, done := cache.Lookup(dir.path)
 		if !done || previous.mostRecent.Before(dir.mostRecent) {
@@ -104,41 +102,38 @@ func walkAndGetTime(path string, info os.FileInfo, err error) error {
 			return nil
 		}
 
-
-		dir, ok = topDirs[ path0 ]
+		dir, ok = topDirs[path0]
 		if !ok {
 			dir = &dirInfo{}
-			topDirs[ path0 ] = dir
+			topDirs[path0] = dir
 		}
 		dir.path = path
-		dir.path0= path0
+		dir.path0 = path0
 		dir.info = info
 
 		fmt.Println("TOP-LEVEL Dir :", splitPath, "mod:", modTime, "info:", info)
 	}
 
-
 	/* for every file and directory, accumulate most recent modification time */
 	cachedModTime, ok := modified[splitPath[0]]
 	if !ok {
-		
-		modified[ path0 ] = cachedModTime
-		fmt.Println("Scanned ", path0 )
+
+		modified[path0] = cachedModTime
+		fmt.Println("Scanned ", path0)
 	}
 	if modTime.After(cachedModTime) {
-		modified[ path0 ] = modTime
+		modified[path0] = modTime
 	}
 
 	return err
 }
-
 
 func printStats() {
 	fmt.Println("----------------------------")
 
 	for key, dir := range topDirs {
 		fmt.Println(key, " : ", dir)
-		if ! dir.info.IsDir() {
+		if !dir.info.IsDir() {
 			panic("Stored as dir, it's not actually a dir")
 		}
 	}
@@ -156,16 +151,15 @@ func performBackup(dir *dirInfo) {
 		return
 	}
 
-	if dir.doBackup != true || ! dir.info.IsDir() {
+	if dir.doBackup != true || !dir.info.IsDir() {
 		log.Panic("Unexpected backup")
 	}
 
-
-	baseBackupDir := DestPath()+"/"
+	baseBackupDir := DestPath() + "/"
 
 	/* Check existence of base directory every time.
 	   TODO: optimize
-	 */
+	*/
 	fi, err := os.Stat(baseBackupDir)
 	if fi == nil && err != nil {
 		log.Fatal("Destination directory does not exist :", baseBackupDir)
@@ -186,5 +180,3 @@ func performBackup(dir *dirInfo) {
 
 	Archive(destFilename, dir.path)
 }
-
-

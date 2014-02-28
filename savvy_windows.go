@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"os/exec"
 	"log"
+	"os/exec"
 )
 
 /*
@@ -17,7 +17,7 @@ func find(execName string, path string) {
 }
 
 func DetectTools() []tool {
-	
+
 	// find one of 7zip, zip in Program Files directory
 	exe := find("7zip.exe", "c:\Program Files")
 	if exe != nil {

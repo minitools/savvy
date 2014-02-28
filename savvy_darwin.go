@@ -1,9 +1,9 @@
 package main
-	
+
 import (
 	"fmt"
-	"os/exec"
 	"log"
+	"os/exec"
 )
 
 func Archive(destFilename string, dirPath string) {
