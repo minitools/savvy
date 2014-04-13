@@ -19,7 +19,9 @@ type Config struct {
 }
 
 var (
-	destPath = flag.String("dest", defaultDestPath(), "destination directory for all backed-up files")
+	destPath    = flag.String("dest", defaultDestPath(), "destination directory for all backed-up files")
+	flagNoOp    = flag.Bool("n", false, "don't perform backup operations (dry run)")
+	flagVerbose = flag.Bool("v", false, "generate verbose output")
 
 	noConfigErr = errors.New("config file not present")
 )

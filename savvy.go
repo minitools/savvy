@@ -72,7 +72,10 @@ func main() {
 
 	/* Perform backups */
 	for key, dir := range topDirs {
-		fmt.Println(key, " : ", dir)
+		if *flagVerbose {
+			fmt.Println(key, " : ", dir)
+		}
+
 		if dir.doBackup {
 			cache.StartBackup(dir)
 			performBackup(dir)
@@ -115,7 +118,10 @@ func walkAndGetTime(path string, info os.FileInfo, err error) error {
 		dir.path0 = path0
 		dir.info = info
 
-		fmt.Println("TOP-LEVEL Dir :", splitPath, "mod:", modTime, "info:", info)
+		if *flagVerbose {
+			fmt.Println("TOP-LEVEL Dir :", splitPath, "mod:", modTime, "info:", info)
+
+		}
 	}
 
 	/* for every file and directory, accumulate most recent modification time */
@@ -136,7 +142,10 @@ func printStats() {
 	fmt.Println("----------------------------")
 
 	for key, dir := range topDirs {
-		fmt.Println(key, " : ", dir)
+		if *flagVerbose {
+			fmt.Println(key, " : ", dir)
+		}
+
 		if !dir.info.IsDir() {
 			panic("Stored as dir, it's not actually a dir")
 		}
@@ -149,6 +158,15 @@ func scheduleBackup(dir *dirInfo) {
 }
 
 func performBackup(dir *dirInfo) {
+
+	baseBackupDir := config.DestPath + "/"
+	log.Println("backup: ", dir.path, " -> ", baseBackupDir)
+
+	if flagNoOp != nil && *flagNoOp {
+		log.Println("invoked with -n, skipping")
+		return
+	}
+
 	/* TODO: rework filtering of directories */
 	if dir.path == "." || dir.path == ".hg" {
 		log.Println("skipping ", dir.path)
@@ -158,10 +176,6 @@ func performBackup(dir *dirInfo) {
 	if dir.doBackup != true || !dir.info.IsDir() {
 		log.Panic("Unexpected backup")
 	}
-
-	log.Println("config:", config)
-	log.Println("destPath:", config.DestPath)
-	baseBackupDir := config.DestPath + "/"
 
 	/* Check existence of base directory every time.
 	   TODO: optimize

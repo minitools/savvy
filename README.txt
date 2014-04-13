@@ -12,6 +12,10 @@ as Zip files with the following name:
 
 Version history
 ---------------
+0.4		Added options:
+			-n 		don't perform backup (no op)
+			-v 		verbose output
+
 0.3		Destination folder can be specified from command line:
 			-dest <directory>
 
@@ -29,7 +33,6 @@ TODO
 - Global configuration file, with support for
   - exclude [pattern]
   - recurse [pattern]
-  <s>- destination [path]</s>
 
 - Specify source directory as argument
 
