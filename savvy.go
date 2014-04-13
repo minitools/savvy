@@ -31,12 +31,20 @@ var (
 	topDirs    map[string]*dirInfo
 	modified   map[string]time.Time
 	cache      *backupCache
+
+	config *Config
 )
 
 func main() {
 
+	var err error
+
 	/* Get configuration options */
-	parseFlags()
+	config, err = flagsAndConfig()
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(-1)
+	}
 
 	cache.Load()
 
@@ -72,10 +80,6 @@ func main() {
 		}
 	}
 
-}
-
-func parseFlags() {
-	/* nothing here */
 }
 
 func traverseLocal(doAction filepath.WalkFunc) {
@@ -155,7 +159,9 @@ func performBackup(dir *dirInfo) {
 		log.Panic("Unexpected backup")
 	}
 
-	baseBackupDir := DestPath() + "/"
+	log.Println("config:", config)
+	log.Println("destPath:", config.DestPath)
+	baseBackupDir := config.DestPath + "/"
 
 	/* Check existence of base directory every time.
 	   TODO: optimize
