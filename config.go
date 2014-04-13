@@ -14,8 +14,8 @@ import (
 
 type Config struct {
 	DestPath string
-	Includes []string
 	Excludes []string
+	Recurses []string
 }
 
 var (
