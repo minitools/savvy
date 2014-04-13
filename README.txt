@@ -10,6 +10,13 @@ as Zip files with the following name:
 {folder name}-{dateYYMMDD-HHMMSS}.zip
 
 
+Supported platforms
+-------------------
+- Unix/Linux
+- MacOS
+- Windows
+
+
 Version history
 ---------------
 0.4		Added options:
