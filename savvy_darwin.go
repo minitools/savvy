@@ -18,7 +18,3 @@ func Archive(destFilename string, dirPath string) {
 	fmt.Println(string(out))
 	fmt.Println("-----------------")
 }
-
-func DestPath() string {
-	return "/Users/Shared/BACKUP"
-}
