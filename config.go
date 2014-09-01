@@ -19,7 +19,7 @@ type Config struct {
 }
 
 var (
-	destPath    = flag.String("dest", defaultDestPath(), "destination directory for all backed-up files")
+	destPath    = flag.String("dest", "", "destination directory for all backed-up files")
 	flagNoOp    = flag.Bool("n", false, "don't perform backup operations (dry run)")
 	flagVerbose = flag.Bool("v", false, "generate verbose output")
 
@@ -45,11 +45,18 @@ func flagsAndConfig() (*Config, error) {
 
 	}
 
-	// 3) write back configuration
-	//    (NOTE: overriden DestPath is saved)
-	err = cfg.save(configPath())
+	// 3) if configuration is valid,
+	//    use it and save it back
+	if cfg.isValid() {
+		// 4) write back configuration
+		//    (NOTE: overriden DestPath is saved)
+		err = cfg.save(configPath())
 
-	return cfg, err
+		return cfg, err
+	} else {
+
+		return nil, errors.New("Invalid configuration")
+	}
 }
 
 func (cfg *Config) load(configPath string) error {
@@ -70,6 +77,11 @@ func (cfg *Config) load(configPath string) error {
 	log.Printf("cfg.load results: %v\nErr: %v\n", cfg, err)
 
 	return err
+}
+
+func (cfg *Config) isValid() bool {
+	_, err := os.Stat(cfg.DestPath)
+	return err == nil
 }
 
 func (cfg *Config) save(configPath string) error {
