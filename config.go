@@ -10,6 +10,7 @@ import (
 	"os"
 	"os/user"
 	"path"
+	"github.com/artyom/autoflags"
 )
 
 type Config struct {
@@ -18,13 +19,22 @@ type Config struct {
 	Recurses []string
 }
 
-var (
-	destPath    = flag.String("dest", defaultDestPath(), "destination directory for all backed-up files")
-	flagNoOp    = flag.Bool("n", false, "don't perform backup operations (dry run)")
-	flagVerbose = flag.Bool("v", false, "generate verbose output")
+var config = struct {
+	destPath string `flag:"dest,destination directory for all backed-up files"`
+	flagNoOp bool `flag:"n,don't perform backup operations (dry run)"`
+	flagVerbose bool `flag:"v,generate verbose output"`
 
-	noConfigErr = errors.New("config file not present")
-)
+}{
+	destPath: defaultDestPath(),
+	flagNoOp: false,
+	flagVerbose: false,
+//	destPath    = flag.String("dest", defaultDestPath(), "destination directory for all backed-up files")
+//	flagNoOp    = flag.Bool("n", false, "don't perform backup operations (dry run)")
+//	flagVerbose = flag.Bool("v", false, "generate verbose output")
+}
+
+var	noConfigErr = errors.New("config file not present")
+
 
 func flagsAndConfig() (*Config, error) {
 
