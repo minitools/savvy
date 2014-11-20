@@ -92,6 +92,11 @@ func load(configPath string) (*Config, error) {
 	return cfg, err
 }
 
+func (cfg *Config) isValid() bool {
+	_, err := os.Stat(cfg.DestPath)
+	return err == nil
+}
+
 func (cfg *Config) save(configPath string) error {
 
 	data, err := json.Marshal(cfg)
