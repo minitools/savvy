@@ -19,11 +19,13 @@ type Config struct {
 }
 
 var (
-	destPath    = flag.String("dest", defaultDestPath(), "destination directory for all backed-up files")
-	flagNoOp    = flag.Bool("n", false, "don't perform backup operations (dry run)")
-	flagVerbose = flag.Bool("v", false, "generate verbose output")
+	flagDestPath = flag.String("dest", "", "destination directory for all backed-up files")
+	flagNoOp     = flag.Bool("n", false, "don't perform backup operations (dry run)")
+	flagVerbose  = flag.Bool("v", false, "generate verbose output")
 
-	noConfigErr = errors.New("config file not present")
+	errNoConfig        = errors.New("config file not present")
+	errConfigCorrupted = errors.New("config file corrupted, not usable")
+	errInvalidConfig   = errors.New("config: expected JSON, got invalid format")
 )
 
 func flagsAndConfig() (*Config, error) {
@@ -33,16 +35,24 @@ func flagsAndConfig() (*Config, error) {
 	cfg := &Config{}
 
 	// 1) read configuration file, if present
-	err := cfg.load(configPath())
+	cfg, err := load(configPath())
 	if err != nil {
 		log.Println(err)
 	}
 
 	// 2) if destination path specified on command line,
 	//    it overrides entry in configuration file
-	if destPath != nil && *destPath != "" {
-		cfg.DestPath = path.Clean(*destPath)
+	log.Println("flagDestPath:", *flagDestPath)
+	if flagDestPath != nil && *flagDestPath != "" {
+		cfg.DestPath = path.Clean(*flagDestPath)
 
+	}
+
+	// 3) check backup destination
+	// if not present, exit
+	if !exists(cfg.DestPath) {
+		fmt.Println("BACKUP DESTINATION DOES NOT EXIST: '", cfg.DestPath, "'")
+		os.Exit(-1)
 	}
 
 	// 3) write back configuration
@@ -52,24 +62,34 @@ func flagsAndConfig() (*Config, error) {
 	return cfg, err
 }
 
-func (cfg *Config) load(configPath string) error {
+func exists(path string) bool {
+	_, err := os.Stat(path)
+	return err == nil
+}
+
+func load(configPath string) (*Config, error) {
 
 	// check existence of config file
 	if _, err := os.Stat(configPath); err != nil {
-		return noConfigErr
+		return nil, errNoConfig
 	}
 
 	file, err := ioutil.ReadFile(configPath)
 	if err != nil {
-		log.Printf("File error: %v\n", err)
-		os.Exit(1)
+		return nil, errConfigCorrupted
 	}
-	log.Printf("%s\n", string(file))
 
+	log.Printf("file: %s\n", string(file))
+
+	cfg := &Config{}
 	err = json.Unmarshal(file, cfg)
+	if err != nil {
+		return nil, errInvalidConfig
+	}
+
 	log.Printf("cfg.load results: %v\nErr: %v\n", cfg, err)
 
-	return err
+	return cfg, err
 }
 
 func (cfg *Config) save(configPath string) error {

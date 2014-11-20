@@ -19,6 +19,9 @@ Supported platforms
 
 Version history
 ---------------
+0.4.1	Fixed issue with destination path being overwritten.
+		Also, checks existence of destination before proceeding with backup.
+
 0.4		Added options:
 			-n 		don't perform backup (no op)
 			-v 		verbose output
