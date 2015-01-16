@@ -40,6 +40,8 @@ Version history
 
 TODO
 ----
+- When running with -n, show exactly which directories would be backed-up
+
 - Global configuration file, with support for
   - exclude [pattern]
   - recurse [pattern]
