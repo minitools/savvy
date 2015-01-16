@@ -38,8 +38,8 @@ Version history
 0.1		Initial version
 
 
-TODO
-----
+To Do
+-----
 - When running with -n, show exactly which directories would be backed-up
 
 - Global configuration file, with support for
@@ -52,3 +52,6 @@ TODO
 
 - Add test suite
 
+Questions, ideas?
+-----------------
+Contact me at Tom Paoletti <tpaoletti_JUSTDROP@users.sf.net>
