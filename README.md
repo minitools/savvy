@@ -1,4 +1,4 @@
-Savvy
+Savvy [![Build Status](https://travis-ci.org/minitools/savvy.svg?branch=master)](https://travis-ci.org/minitools/savvy)
 =====
 Incredibly basic backup utility that:
 1. scans local folders, extracting last modification date
