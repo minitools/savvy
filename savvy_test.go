@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"os"
 	"os/exec"
 	"testing"
@@ -10,13 +11,8 @@ import (
 
 var safeEnvironment = false
 
-func safeToRun(t *testing.T) {
-	if !safeEnvironment {
-		t.Fatal("unsafe env")
-	}
-}
-
-func Test000_SetupDirs(t *testing.T) {
+func setup(t *testing.T) {
+	// TODO: clean up existing dir
 
 	// make dir
 	err := os.Mkdir("test/", os.ModeDir|0777)
@@ -26,14 +22,18 @@ func Test000_SetupDirs(t *testing.T) {
 
 	err = os.Chdir("test")
 	if err != nil {
-		t.Fatal(err)
+		log.Fatal(err)
 	}
 
-	wd, err2 := os.Getwd()
-	if err2 == nil {
+	wd, err := os.Getwd()
+	if err == nil {
 		safeEnvironment = true
 	}
-	t.Log("Working dir:", wd)
+	log.Println("Working dir:", wd)
+}
+
+func teardown(t *testing.T) {
+
 }
 
 /*
@@ -41,23 +41,22 @@ func Test000_SetupDirs(t *testing.T) {
 */
 func Test001_Empty(t *testing.T) {
 
-	safeToRun(t)
+	setup()
+	defer teardown()
 
 	err := os.Mkdir("a00", os.ModeDir|0777)
-	err = err
-	//if err != nil {
-	//	t.Fatal(err)
-	//}
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	// run savvy on it
-	out, err2 := exec.Command("../savvy").Output()
+	out, err := exec.Command("./savvy").Output()
 
-	if err2 != nil {
-		t.Fatal(err2)
+	if err != nil {
+		t.Fatal(err)
 	}
 
 	t.Log(string(out))
-	err2 = err2
 
 	// verify results
 	//t.Error("not implemented\n")
@@ -71,7 +70,8 @@ func Test001_Empty(t *testing.T) {
 func Test002_Simple(t *testing.T) {
 	t.Error("not implemented\n")
 
-	safeToRun(t)
+	setup(t)
+	defer teardown(t)
 }
 
 /*
@@ -80,7 +80,12 @@ func Test002_Simple(t *testing.T) {
 func Test003_SpecialCharName(t *testing.T) {
 	t.Error("not implemented\n")
 
-	safeToRun(t)
+	setup(t)
+	defer teardown(t)
+}
+
+func Test_SymbolicLink(t *testing.T) {
+	t.Error("not implemented\n")
 }
 
 /*
@@ -89,7 +94,8 @@ func Test003_SpecialCharName(t *testing.T) {
 func Test004_Ignore(t *testing.T) {
 	t.Error("not implemented\n")
 
-	safeToRun(t)
+	setup(t)
+	defer teardown(t)
 }
 
 /*
@@ -100,7 +106,8 @@ func Test004_Ignore(t *testing.T) {
 func Test005_DestinationDirectory(t *testing.T) {
 	t.Error("not implemented\n")
 
-	safeToRun(t)
+	setup(t)
+	defer teardown(t)
 
 	// remove any .savvy file
 
@@ -122,7 +129,8 @@ func Test005_DestinationDirectory(t *testing.T) {
 func Test006_CacheIsWorking(t *testing.T) {
 	t.Error("not implemented\n")
 
-	safeToRun(t)
+	setup(t)
+	defer teardown(t)
 
 	// remove any .savvy file
 
