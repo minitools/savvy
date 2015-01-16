@@ -1,7 +1,10 @@
 
 
 all:
-	go build
+	go get -v
+	go build -v
 
-test: savvy
-	cd .. && savvy/savvy && cd -
+test:
+	go test -v ./...
+
+.PHONY: all test
