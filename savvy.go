@@ -1,13 +1,5 @@
 package main
 
-/* TO DO:
-   1. finish traversal by
-   - recording last modification time for top-level directory (accumulate in map)
-   - add top-level dir to list of directories to backup, if backup criteria met
-
-   2. perform backup to fixed location
-*/
-
 import (
 	"fmt"
 	"log"
@@ -26,11 +18,9 @@ type dirInfo struct {
 }
 
 var (
-	oldest     time.Time = time.Now()
-	mostRecent time.Time
-	topDirs    map[string]*dirInfo
-	modified   map[string]time.Time
-	cache      *backupCache
+	topDirs  map[string]*dirInfo
+	modified map[string]time.Time
+	cache    *backupCache
 
 	config *Config
 )

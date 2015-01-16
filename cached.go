@@ -1,5 +1,10 @@
 package main
 
+/* cache is work-in-progress.
+   currently relying on existence of destination backup file
+   to detect whether a directory has been backed up.
+*/
+
 /* cache of backups performed in the current directory */
 type backupCache struct {
 	previous map[string]dirInfo
