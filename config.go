@@ -42,16 +42,15 @@ func flagsAndConfig() (*Config, error) {
 
 	// 2) if destination path specified on command line,
 	//    it overrides entry in configuration file
-	log.Println("flagDestPath:", *flagDestPath)
 	if flagDestPath != nil && *flagDestPath != "" {
+		log.Println("flagDestPath:", *flagDestPath)
 		cfg.DestPath = path.Clean(*flagDestPath)
-
 	}
 
 	// 3) check backup destination
 	// if not present, exit
 	if !exists(cfg.DestPath) {
-		fmt.Println("BACKUP DESTINATION DOES NOT EXIST: '", cfg.DestPath, "'")
+		fmt.Printf("BACKUP DESTINATION DOES NOT EXIST: '%s'\n", cfg.DestPath)
 		os.Exit(-1)
 	}
 
@@ -115,7 +114,6 @@ func (cfg *Config) save(configPath string) error {
 }
 
 func configPath() string {
-
 	// get user home dir
 	usr, err := user.Current()
 	if err != nil {
@@ -123,11 +121,10 @@ func configPath() string {
 	}
 	log.Printf("home=%q", usr.HomeDir)
 
-	return path.Join(usr.HomeDir, "/.savvy.config")
+	return path.Join(usr.HomeDir, ".savvy.config")
 }
 
 func defaultDestPath() string {
-
 	// get user home dir
 	usr, err := user.Current()
 	if err != nil {

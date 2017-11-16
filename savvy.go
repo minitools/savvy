@@ -93,9 +93,9 @@ func walkAndGetTime(path string, info os.FileInfo, err error) error {
 	if info.IsDir() && len(splitPath) == 1 {
 
 		/* If directory contains a .savvyignore file, skip */
-		fi, err := os.Stat(path0 + "/savvyignore")
+		fi, err := os.Stat(filepath.Join(path0, ".savvyignore"))
 		if fi != nil && err == nil {
-			log.Println("Directory contains \"savvyignore\", skipping :", path0)
+			log.Println("Directory contains \".savvyignore\", skipping :", path0)
 			return nil
 		}
 
